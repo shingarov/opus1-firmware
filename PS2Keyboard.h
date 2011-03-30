@@ -96,13 +96,6 @@ class PS2Keyboard {
     PS2Keyboard();
     
     /**
-     * Starts the keyboard "service" by registering the external interrupt.
-     * setting the pin modes correctly and driving those needed to high.
-     * The propably best place to call this method is in the setup routine.
-     */
-    static void begin(uint8_t dataPin, uint8_t irq_pin);
-    
-    /**
      * Returns true if there is a char to be read, false if not.
      */
     static bool available();
@@ -114,14 +107,6 @@ class PS2Keyboard {
     static int read();
 };
 
-// interrupt pins for known boards
-#ifndef CORE_INT0_PIN   // if not already defined by core (eg, Teensy)
-#define CORE_INT0_PIN  2
-#define CORE_INT1_PIN  3
-#define CORE_INT2_PIN  21
-#define CORE_INT3_PIN  20
-#define CORE_INT4_PIN  19
-#define CORE_INT5_PIN  18
-#endif
+void initialize_ps2();
 
 #endif

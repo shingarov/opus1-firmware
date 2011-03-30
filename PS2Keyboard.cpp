@@ -219,48 +219,29 @@ PS2Keyboard::PS2Keyboard() {
   // nothing to do here, begin() does it all
 }
 
-void PS2Keyboard::begin(uint8_t dataPin, uint8_t irq_pin) {
-  uint8_t irq_num=0;
+/*
+ * INT-to-PIN correspondence:
+ * IRQ 0 = PIN 2,
+ * IRQ 1 = PIN 3,
+ * IRQ 2 = PIN 21,
+ * IRQ 3 = PIN 20,
+ * IRQ 4 = PIN 19,
+ * IRQ 5 = PIN 18.
+ * Opus.1 uses IRQ PIN 21 and Data PIN 20.
+ */
+#define IRQ_NUMBER 2
+#define IRQ_PIN  21
+#define DATA_PIN 20
 
-  ps2Keyboard_DataPin = dataPin;
-
-  // initialize the pins
-#ifdef INPUT_PULLUP
-  pinMode(irq_pin, INPUT_PULLUP);
-  pinMode(dataPin, INPUT_PULLUP);
-#else
-  pinMode(irq_pin, INPUT);
-  digitalWrite(irq_pin, HIGH);
-  pinMode(dataPin, INPUT);
-  digitalWrite(dataPin, HIGH);
-#endif
-  
-  switch(irq_pin) {
-    case CORE_INT0_PIN:
-      irq_num = 0;
-      break;
-    case CORE_INT1_PIN:
-      irq_num = 1;
-      break;
-    case CORE_INT2_PIN:
-      irq_num = 2;
-      break;
-    case CORE_INT3_PIN:
-      irq_num = 3;
-      break;
-    case CORE_INT4_PIN:
-      irq_num = 4;
-      break;
-    case CORE_INT5_PIN:
-      irq_num = 5;
-      break;
-    default:
-      irq_num = 0;
-      break;
-  }
+void initialize_ps2() {
+  ps2Keyboard_DataPin = DATA_PIN;
+  pinMode(IRQ_PIN, INPUT);
+  digitalWrite(IRQ_PIN, HIGH);
+  pinMode(DATA_PIN, INPUT);
+  digitalWrite(DATA_PIN, HIGH);
   head = 0;
   tail = 0;
-  attachInterrupt(irq_num, ps2interrupt, FALLING);
+  attachInterrupt(IRQ_NUMBER, ps2interrupt, FALLING);
 }
 
 
