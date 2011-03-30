@@ -108,5 +108,6 @@ class PS2Keyboard {
 };
 
 void initialize_ps2();
+uint8_t get_scan_code(void);
 
 #endif

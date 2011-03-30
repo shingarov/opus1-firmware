@@ -69,7 +69,7 @@ void ps2interrupt(void)
 	}
 }
 
-static inline uint8_t get_scan_code(void)
+uint8_t get_scan_code(void)
 {
 	uint8_t c, i;
 

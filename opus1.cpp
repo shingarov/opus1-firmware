@@ -10,13 +10,19 @@ PS2Keyboard keyboard;
 
 void setup() {
   delay(1000);
-  keyboard.begin(DataPin, IRQpin);
+//  keyboard.begin(DataPin, IRQpin);
+initialize_ps2();
   Serial.begin(9600);
   Serial.println("Keyboard Test:");
 }
 
 void loop() {
-  if (keyboard.available()) {
+
+  uint8_t scancode = get_scan_code();
+  if (scancode) {
+    Serial.print("CONTACT!\n");
+  }
+/*  if (keyboard.available()) {
     
     // read the next key
     char c = keyboard.read();
@@ -47,7 +53,7 @@ void loop() {
       // otherwise, just print all normal characters
       Serial.print(c);
     }
-  }
+  }*/
 }
 
 
