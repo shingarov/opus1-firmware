@@ -5,7 +5,6 @@
 
 #include <WProgram.h>
 #include <avr/sleep.h>
-#include "sym_KT.h"
 
 
 //-----------------------------------------------------------------------------
@@ -33,25 +32,12 @@
 // pins assigned to LED matrix columns;
 byte pinForRow[8] = {8, 9, 10, 11, 12, 13, 7, 3};
 
-//-----------------------------------------------------------------------------
-
-// display colours;
-#define BLACK   0
-#define RED     1
-#define GREEN   2
-#define ORANGE  3
-
 
 byte soft_prescaler = 0;
 byte activeRow = 0;
 
 // video memory for the 8x8 RG display;
 byte screenMem[16] = {0};
-
-// current colour used for display;
-byte page = GREEN;
-
-
 
 // indexes in sprite array;
 #define OPTION_SLEEP         9
@@ -163,7 +149,7 @@ void loop()
   int x,y;
   for (x=0; x<8; x++)
     for (y=0; y<8; y++) {
-      delay(100);
+      delay(800);
       ledON(x,y);
     }
   for (x=0; x<8; x++)
@@ -183,7 +169,6 @@ void ledOFF(int x, int y)
 {
   byte mask = 1<<(7-x);
   mask = ~mask;
-  screenMem[y]   = screenMem[y]   & mask;
   screenMem[y+8] = screenMem[y+8] & mask;
 }
 
