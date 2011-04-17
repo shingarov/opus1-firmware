@@ -26,7 +26,7 @@ opus1.eep: opus1.elf
 opus1.hex: opus1.elf
 	avr-objcopy -O ihex -R .eeprom opus1.elf opus1.hex 
 
-upload:
+upload: opus1.hex
 	$(DUDE) $(DUDEFLAGS) -Uflash:w:opus1.hex:i
 
 
