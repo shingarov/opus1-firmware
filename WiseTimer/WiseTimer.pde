@@ -208,7 +208,7 @@ void loop()
   for (x=0; x<8; x++)
     for (y=0; y<8; y++) {
       delay(600);
-      setPixel(ORANGE, x,y);
+      setPixel(RED, x,y);
     }
   delay(900000);
 }
@@ -269,83 +269,6 @@ void displayTransition_RowByRow(int trNum)
 
 void displayTransition_Random(int trNum)
 {
-  Serial.print("Transition number ");
-  Serial.print(trNum);
-  
-  // trNum is between 120 and 0;
-  // for trNum between 120 and 60, pixel changes color from green to yellow;
-  // for trNum between  59 and  0, pixel color changes from yellow to red;
-
-  // generate pixel's location;
-  for (int i=0; i<20; i++)
-  {
-    // max 20 tries to find a pixel to change;
-    // if not found randomly, then search for one;
-    int randomAddr = random(64);  // return 0..63
-  Serial.print("  randomAddr=");
-  Serial.print(randomAddr);
-
-    int x0 = randomAddr % 8;
-    int y0 = randomAddr / 8;
-    if (trNum >= 60)
-    {
-      // looking for green pixels;
-      if (getPixel(GREEN, x0, y0))
-      {
-        // change it to orange;
-        setPixel(BLACK,  x0, y0);
-        setPixel(ORANGE, x0, y0);
-  Serial.println("  found randomly green pixel");
-  
-        return;
-      }
-    }
-    else
-    {
-      // looking for orange pixels;
-      if (getPixel(ORANGE, x0, y0))
-      {
-        // change it to red;
-        setPixel(BLACK, x0, y0);
-        setPixel(RED,   x0, y0);
-  Serial.println("  found randomly orange pixel");
-        return;
-      }
-    }
-  }
-  
-  // being here, all random attempts to find a pixel to change failed;
-  // will find it systematically, by scanning every row;
-  for (int x=0; x<8; x++)
-  {
-    for (int y=0; y<8; y++)
-    {
-      if (trNum >= 60)
-      {
-        // looking for green pixels;
-        if (getPixel(GREEN, x, y))
-        {
-  Serial.println("  found systematically green pixel");
-          // change it to orange;
-          setPixel(BLACK,  x, y);
-          setPixel(ORANGE, x, y);
-          return;
-        }
-      }
-      else
-      {
-        // looking for orange pixels;
-        if (getPixel(ORANGE, x, y))
-        {
-  Serial.println("  found systematically orange pixel");
-          // change it to red;
-          setPixel(BLACK, x, y);
-          setPixel(RED,   x, y);
-          return;
-        }
-      }
-    }
-  }
 }
 
 
