@@ -236,33 +236,3 @@ void setPixel(int color, int x, int y)
   }
 }
 
-
-// returns the state (on or off) of the pixel;
-boolean getPixel(int color, int x, int y)
-{
-  byte mask = 1<<(7-x);
-  byte stateOfRed   = screenMem[y+8] & mask;;
-  byte stateOfGreen = screenMem[y]   & mask;
-
-  if (color == RED)
-  {
-    // looking for pure red, so need to check the green as well, just in case it's orange;
-    return (stateOfRed != 0 && stateOfGreen == 0);
-  }
-
-  if (color == GREEN)
-  {
-    // looking for pure green, so need to check the red as well, just in case it's orange;
-    return (stateOfGreen != 0 && stateOfRed == 0);
-  }
-
-  if (color == ORANGE)
-  {
-    return (stateOfGreen != 0 && stateOfRed != 0);
-  }
-
-  return false;
-}
-
-
-
