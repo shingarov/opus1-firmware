@@ -192,7 +192,7 @@ void loop()
   int x,y;
   for (x=0; x<8; x++)
     for (y=0; y<8; y++) {
-      delay(10);
+      delay(800);
       setPixel(RED, x,y);
     }
   delay(900000);
@@ -203,52 +203,6 @@ void wakeUpNow()        // here the interrupt is handled after wakeup
 {
 }
 void bigOptionSwitch()
-{
-}
-
-
-void countDown()
-{
-  currentCount--;
-
-  // change the pixels accordingly;
-//  displayTransition_RowByRow(currentCount);
-  displayTransition_Random(currentCount);
-
-  delay(waitBetweenPixels);
-
-  if (currentCount == 0 && initialTime > 0)
-  {
-    // stop the current countdown;
-    isCounting = false;
-    initialTime = 0;
-    
-    // REM: ring the bell;
-    return;
-  }
-
-}
-
-
-void displayTransition_RowByRow(int trNum)
-{
-  Serial.print("Transition number ");
-  Serial.println(trNum);
-  
-  // trNum is between 120 and 0;
-  // for trNum between 120 and 60, pixel changes color from green to yellow;
-  // for trNum between  59 and  0, pixel color changes from yellow to red;
-
-  // calculate pixel's location;
-  int x = (trNum%60) % 8;
-  int y = (trNum%60) / 8;
-
-  setPixel(BLACK, x, y);
-  setPixel((trNum >= 60 ? ORANGE : RED), x, y);
-}
-
-
-void displayTransition_Random(int trNum)
 {
 }
 
