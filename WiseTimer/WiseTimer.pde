@@ -82,8 +82,9 @@ int initialTime = 0;
 int currentCount = 0;
 
 
-void setup()
+void setupLED()
 {
+  // null out video memory
   for (byte i = 0; i < 16; i++)  screenMem[i] = 0x00;
   
   // Calculation for timer 2
@@ -109,7 +110,10 @@ void setup()
   pinMode(14, OUTPUT);	// analog 0;
   pinMode(15, OUTPUT);  // analog 1;
   pinMode(16, OUTPUT);  // analog 2;
+}
 
+void setup() {
+  setupLED();
 }
 
 
@@ -159,38 +163,27 @@ void loop()
   int x,y;
   for (x=0; x<8; x++)
     for (y=0; y<8; y++) {
-      delay(800);
-      setPixel(RED, x,y);
+      delay(100);
+      ledON(x,y);
     }
-  delay(900000);
+  for (x=0; x<8; x++)
+    for (y=0; y<8; y++) {
+      delay(100);
+      ledOFF(x,y);
+    }
 }
 
-void setPixel(int color, int x, int y)
+void ledON(int x, int y)
 {
   byte mask = 1<<(7-x);
+  screenMem[y+8] = screenMem[y+8] | mask;
+}
 
-  if (color == RED)
-  {
-    screenMem[y+8] = screenMem[y+8] | mask;  // red
-  }
-  else if (color == GREEN)
-  {
-    screenMem[y]   = screenMem[y]   | mask;  // green
-  }
-  else if (color == ORANGE)
-  {
-    screenMem[y]   = screenMem[y]   | mask;  // green
-    screenMem[y+8] = screenMem[y+8] | mask;  // red
-  }
-  else if (color == BLACK)
-  {
-    mask = ~mask;
-    screenMem[y]   = screenMem[y]   & mask;
-    screenMem[y+8] = screenMem[y+8] & mask;
-  }
-  else
-  {
-    // imposible color for an RG display;
-  }
+void ledOFF(int x, int y)
+{
+  byte mask = 1<<(7-x);
+  mask = ~mask;
+  screenMem[y]   = screenMem[y]   & mask;
+  screenMem[y+8] = screenMem[y+8] & mask;
 }
 
