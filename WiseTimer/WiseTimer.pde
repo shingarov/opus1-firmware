@@ -8,11 +8,6 @@
 #include "sym_KT.h"
 
 
-// used to enable/disable Serial.print, time-consuming operation;
-// to minimize the code size, all references to Serial should be commented out;
-#define _DEBUG_     true
-
-
 //-----------------------------------------------------------------------------
 /* Pins used in Wise Clock are as follows:
 	analog  0..2          available;
@@ -141,10 +136,6 @@ void setup()
   pinMode(16, OUTPUT);  // analog 2;
 
   resetDisplay();
-
-#ifdef _DEBUG_
-    Serial.begin(9600);
-#endif
 }
 
 
@@ -239,139 +230,25 @@ void setScreenMem(byte color, byte sprite[8])
 
 void loop()
 {
-  // check menu button (connects analog pin 3 to ground);
-  int val = analogRead(MENU_BUTTON_PIN);
-  if (val < 5)
-  {
-    // menu button was pressed;
-    processMenuButton();
-  }
-  
-  if (isCounting)
-  {
-    Serial.print("isCounting=");
-    Serial.println(isCounting, DEC);
-    countDown();
-    return;
-  }
-
-  // display the menu option for 5 seconds after menu button was pressed;
-  if ((menuTime > 0) && (millis() - menuTime < 5000))
-  {
-      isMenuOptionOnDisplay = true;
-
-      if (mustRefreshDisplay)
-      {
-        resetDisplay();
-        setScreenMem(GREEN, sprites[menuOption]);
-        mustRefreshDisplay = false;
-      }
-  }
-  else
-  {
-    // clear screen after displaying menu option for 5 seconds;
-    if (isMenuOptionOnDisplay)
-    {
-      resetDisplayByMovingDot();
-      isMenuOptionOnDisplay = false;
-
-      bigOptionSwitch();
+  int x,y;
+  for (x=0; x<8; x++)
+    for (y=0; y<8; y++) {
+      delay(30);
+      setPixel(ORANGE, x,y);
     }
-  }
+  delay(900000);
 }
 
 
 
-//------------------------------------------------------------------------
-// put the arduino to sleep to save power;
-// function copied from http://www.arduino.cc/playground/Learning/arduinoSleepCode;
-//------------------------------------------------------------------------
 void sleepNow()
 {
-    /* Now is the time to set the sleep mode. In the Atmega8 datasheet
-     * http://www.atmel.com/dyn/resources/prod_documents/doc2486.pdf on page 35
-     * there is a list of sleep modes which explains which clocks and 
-     * wake up sources are available in which sleep modus.
-     *
-     * In the avr/sleep.h file, the call names of these sleep modus are to be found:
-     *
-     * The 5 different modes are:
-     *     SLEEP_MODE_IDLE         -the least power savings 
-     *     SLEEP_MODE_ADC
-     *     SLEEP_MODE_PWR_SAVE
-     *     SLEEP_MODE_STANDBY
-     *     SLEEP_MODE_PWR_DOWN     -the most power savings
-     *
-     * For now, we want as much power savings as possible, so we 
-     * choose the according 
-     * sleep modus: SLEEP_MODE_PWR_DOWN
-     * 
-     */  
-    set_sleep_mode(SLEEP_MODE_PWR_DOWN);   // sleep mode is set here
-
-    sleep_enable();          // enables the sleep bit in the mcucr register so sleep is possible; just a safety pin;
-
-    detachInterrupt(0);      // disables the previous routine (IR receiver ISR);
-    attachInterrupt(0, wakeUpNow, LOW); // use interrupt 0 (pin 2) and run function wakeUpNow when pin 2 gets LOW (IR command);
-
-#ifdef _DEBUG_
-    Serial.println("going to sleep...");
-#endif
-
-    sleep_mode();        // the device is actually put to sleep! THE PROGRAM CONTINUES FROM HERE AFTER WAKING UP.
-
-#ifdef _DEBUG_
-    Serial.println("I am back!");
-#endif
-
-    sleep_disable();         // first thing after waking from sleep: disable sleep...
-
-    detachInterrupt(0);      // disables interrupt 0 on pin 2 so the wakeUpNow code will not be executed during normal running time;
-//    attachInterrupt(0, irReceiverISR, LOW);
 }
-
-
 void wakeUpNow()        // here the interrupt is handled after wakeup
 {
-  // execute code here after wake-up before returning to the loop() function
-  // timers and code using timers (serial.print and more...) will not work here.
-  // we don't really need to execute any special functions here, since we just want the thing to wake up;
 }
-
-
 void bigOptionSwitch()
 {
-    switch (menuOption)
-    {
-      case OPTION_SLEEP:
-        // used for power saving; it puts the processor in "sleep mode power down";
-        resetDisplay();
-        delay(100);     // this delay is needed;
-        sleepNow();
-        break;
-
-      default:
-        // count down from the specified time (in seconds);
-        initialTime = 60 + menuOption * 30;
-        currentCount = 120;
-
-        // total number of pixels to update is 120 which is made of
-        // 60 transitions from green to yellow, 60 transitions from yellow to red;
-        // screen is updated depending on the initial timer setting;
-        // e.g. for 60 seconds, update screen every half second;
-        waitBetweenPixels = 1000.0 * initialTime / 120;
-
-  Serial.print("initial time=");
-  Serial.println(initialTime);
-  Serial.print("waitBetweenPixels=");
-  Serial.println(waitBetweenPixels);
-
-        // initial screen is all green;
-        setScreenMem(GREEN, sprites[ALL_LIT]);
-
-        isCounting = true;
-        break;
-    }
 }
 
 
