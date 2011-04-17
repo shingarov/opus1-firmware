@@ -84,7 +84,7 @@ int currentCount = 0;
 
 void setup()
 {
-  resetDisplay();
+  for (byte i = 0; i < 16; i++)  screenMem[i] = 0x00;
   
   // Calculation for timer 2
   // 16 MHz / 8 = 2 MHz (prescaler 8)
@@ -154,39 +154,6 @@ void shiftOutRow(byte red, byte green)
 }
 
 
-void resetDisplay()
-{
-  for (byte i = 0; i < 16; i++)  screenMem[i] = 0x00;
-}
-
-
-// added Feb14/09 to delete the display by moving a dot from
-// the upper left corner to the lower right corner;
-void resetDisplayByMovingDot()
-{
-  byte mask;
-
-  // the dot has the color of the current page;
-  // REM: will not work for orange (both pages would need to be masked dot by dot);
-  byte idx = ((page & GREEN) == GREEN)? 0 : 8;
-
-  for (byte y=0; y < 8; y++)
-  {
-    for (byte x = 0; x < 8; x++)
-    {
-      // show dot at the particular location;
-      mask = 1<<(7-x);
-      screenMem[y+idx] = screenMem[y+idx] | mask;
-
-      delay(20);
-
-      // delete dot from the particular location, leaving location empty;
-      mask = 0x7F >> x;
-      screenMem[y+idx] = screenMem[y+idx] & mask;
-    }
-  }
-}
-
 void loop()
 {
   int x,y;
@@ -197,15 +164,6 @@ void loop()
     }
   delay(900000);
 }
-
-
-void wakeUpNow()        // here the interrupt is handled after wakeup
-{
-}
-void bigOptionSwitch()
-{
-}
-
 
 void setPixel(int color, int x, int y)
 {
