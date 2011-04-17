@@ -187,37 +187,18 @@ void resetDisplayByMovingDot()
   }
 }
 
-
-// statically displays the given sprite;
-void setScreenMem(byte color, byte sprite[8])
-{
-  byte row;
-  for (byte i = 0; i < 8; i++)
-  {
-    row = sprite[i];
-    if ((color & RED)   == RED)    screenMem[i+8] = row;
-    if ((color & GREEN) == GREEN)  screenMem[i]   = row;
-  }
-}
-
-
-
 void loop()
 {
   int x,y;
   for (x=0; x<8; x++)
     for (y=0; y<8; y++) {
-      delay(600);
+      delay(10);
       setPixel(RED, x,y);
     }
   delay(900000);
 }
 
 
-
-void sleepNow()
-{
-}
 void wakeUpNow()        // here the interrupt is handled after wakeup
 {
 }
