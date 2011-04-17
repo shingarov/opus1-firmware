@@ -7,16 +7,16 @@ const int DataPin = 20;
 const int IRQpin =  21;
 
 void setup() {
-  delay(1000);
+  delay(100);
   initialize_ps2();
   Serial.begin(9600);
-  Serial.println("Keyboard Test:");
+  Serial.println("***");
 }
 
 void loop() {
   uint8_t scancode = get_scan_code();
   if (scancode) {
-    Serial.print("CONTACT!\n");
+    Serial.println(scancode, HEX);
   }
 }
 
