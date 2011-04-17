@@ -70,17 +70,8 @@ volatile int menuOption = DEFAULT_OPTION;
 
 float waitBetweenPixels = 0.0;
 
-
-// button debouncing adapted from http://www.arduino.cc/cgi-bin/yabb2/YaBB.pl?num=1210559123/7;
-#define BOUNCE_TIME_BUTTON  600   // bounce time in ms for the menu button;
-#define BOUNCE_TIME_IR      500   // bounce time in ms for the IR receiver;
-
-
 // last time a command (IR or button) was received; used for debouncing;
 volatile unsigned long menuTime = 0;
-
-// indicates that one of the menu options (0..MAX_OPTION) is currently displayed;
-boolean isMenuOptionOnDisplay = false;
 
 // indicates that display needs to be refreshed;
 boolean mustRefreshDisplay = false;
@@ -91,26 +82,10 @@ int initialTime = 0;
 int currentCount = 0;
 
 
-// executed as a result of the menu button being pressed;
-// determines the menu to be displayed;
-void processMenuButton()
-{
-  // debouncing;
-  if (abs(millis() - menuTime) < BOUNCE_TIME_BUTTON)
-    return;
-
-  menuTime = millis();
-
-  menuOption++;
-  if (menuOption > MAX_OPTION) menuOption = 0;
-  mustRefreshDisplay = true;
-
-  isCounting = false;
-}
-
-
 void setup()
 {
+  resetDisplay();
+  
   // Calculation for timer 2
   // 16 MHz / 8 = 2 MHz (prescaler 8)
   // 2 MHz / 256 = 7812 Hz
@@ -135,7 +110,6 @@ void setup()
   pinMode(15, OUTPUT);  // analog 1;
   pinMode(16, OUTPUT);  // analog 2;
 
-  resetDisplay();
 }
 
 
@@ -233,7 +207,7 @@ void loop()
   int x,y;
   for (x=0; x<8; x++)
     for (y=0; y<8; y++) {
-      delay(30);
+      delay(600);
       setPixel(ORANGE, x,y);
     }
   delay(900000);
