@@ -1,0 +1,21 @@
+Construction of individual drawknobs
+
+The finest stop action known to humans, is, unquestionably, the pull-out
+drawknob.  Such drawknob has two stable states -- on and off -- with
+mechanical moving action.  In the electronic case, this drawknob will
+require a solenoid to allow Combination Action and General Cancel.
+
+While exceptionally nice, solenoid pull-out stop controls are also very
+expensive and complex to build.  A close fuctional alternative, would
+be a push knob: the state of the stop is indicated by an LED situated in
+the center of the knob.
+
+PHOTO
+
+DRAWING of handle, face board, axis rod, support planck, spring
+
+The construction of an array of push knobs is simple.  The ø1 3/4"
+wood handles are glued to ø7/8" axis rods.  The rods go through closely-
+fit ø7/8" round holes in the face board.  On the back, they are screwed
+to the support planck
+
