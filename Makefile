@@ -3,11 +3,13 @@
 # Copyright (c) 2010-2011 Ladarevo Software Inc.
 #
 
+CC=avr-gcc
 CXX=avr-g++
 INCLUDES=-I/usr/share/arduino/hardware/arduino/cores/arduino
-CXXFLAGS=$(INCLUDES) -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -mmcu=atmega2560 -DF_CPU=16000000L -DARDUINO=22
+CFLAGS=$(INCLUDES) -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -mmcu=atmega2560 -DF_CPU=16000000L -DARDUINO=22
+CXXFLAGS=$(CFLAGS)
 
-OBJS=opus1.o PS2Keyboard.o
+OBJS=opus1.o PS2Keyboard.o LED.o
 
 DUDE=/usr/share/arduino/hardware/tools/avrdude
 DUDECONF=/usr/share/arduino/hardware/tools/avrdude.conf
