@@ -52,6 +52,35 @@ void setup() {
   digitalWrite(A5, HIGH);
 }
 
+/*
+ * Calculate the code of the knob:
+ * 0xXY,
+ * X - column (1-9, 1-5, 1-4),
+ * Y - row:
+ *   0: Organ selection
+ *   1-9: Speaking stops
+ *   A: Couplers
+ */
+static unsigned int encode(int in, int out) {
+  static unsigned int outputOrder[10] =
+    { 3, 2, 4, 5, 0xF, 7, 6, 9, 8, 1 };
+
+  if (in==0) {
+    // Organ selection
+    return outputOrder[out] << 4;
+  }
+
+  if (out==4) {
+    return (in<<4) + 0x0A;
+  }
+
+  return (in<<4) + outputOrder[out];
+}
+
+static void reportPressedButton(int in, int out) {
+  unsigned char x = encode(in, out);
+  Serial.write(x);
+}
 
 void lineCycle(int outputLine) {
   pinMode(outputLine+2, OUTPUT);
@@ -63,15 +92,14 @@ void lineCycle(int outputLine) {
     if (x == LOW) {
       if (getStatus(outputLine, in)) {
         turnDown(outputLine, in);
-        int scancode = in<<4 | outputLine;
-        Serial.println(scancode, HEX);
+        reportPressedButton(in, outputLine);
     }
       
   }
   if (x==HIGH) {
     if (!getStatus(outputLine,in)) {
+      // detected a released button
       turnUp(outputLine,in);
-      Serial.println("RELEASED!!!");
     }
   }
   }
