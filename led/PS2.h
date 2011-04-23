@@ -23,8 +23,8 @@
 */
 
 
-#ifndef PS2Keyboard_h
-#define PS2Keyboard_h
+#ifndef PS2_h
+#define PS2_h
 
 #include <avr/io.h>
 #include <avr/interrupt.h>

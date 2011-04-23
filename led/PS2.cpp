@@ -33,7 +33,7 @@
 #include <avr/interrupt.h>
 #include <avr/pgmspace.h>
 #include <WProgram.h>
-#include "PS2Keyboard.h"
+#include "PS2.h"
 #include "binary.h"
 typedef uint8_t boolean;
 typedef uint8_t byte;

@@ -9,7 +9,7 @@ INCLUDES=-I/usr/share/arduino/hardware/arduino/cores/arduino
 CFLAGS=$(INCLUDES) -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -mmcu=atmega2560 -DF_CPU=16000000L -DARDUINO=22
 CXXFLAGS=$(CFLAGS)
 
-OBJS=opus1.o PS2Keyboard.o LED.o
+OBJS=opus1.o PS2.o LED.o
 
 DUDE=/usr/share/arduino/hardware/tools/avrdude
 DUDECONF=/usr/share/arduino/hardware/tools/avrdude.conf
@@ -19,8 +19,8 @@ DUDEFLAGS=-C$(DUDECONF) $(DUDEBUG) -patmega2560 -cstk500v2 -P/dev/ttyACM0 -b1152
 
 all: opus1.hex opus1.eep
 
-opus1.elf: $(OBJS) core.a
-	avr-gcc -Os -Wl,--gc-sections -mmcu=atmega2560 -o opus1.elf $(OBJS) core.a -lm
+opus1.elf: $(OBJS) ../core.a
+	avr-gcc -Os -Wl,--gc-sections -mmcu=atmega2560 -o opus1.elf $(OBJS) ../core.a -lm
 
 opus1.eep: opus1.elf
 	avr-objcopy -O ihex -j .eeprom --set-section-flags=.eeprom=alloc,load --no-change-warnings --change-section-lma .eeprom=0 opus1.elf opus1.eep
