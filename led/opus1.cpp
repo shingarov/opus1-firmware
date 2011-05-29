@@ -1,15 +1,11 @@
 #include "WProgram.h"
-#include "PS2.h"
 #include "LED.h"
 
 void setup();
 void loop();
-const int DataPin = 20;
-const int IRQpin =  21;
 
 void setup() {
   setupLED();
-  initialize_ps2();
   Serial.begin(9600);
 }
 
@@ -30,7 +26,6 @@ void setup() {
  * Organ Coordinates.
  */
 static void executeLedCommand(int command) {
-Serial.println(command, HEX);
   int x = command & 0x07;
   int y = (command & 0x38) >> 3;
   if (command & 0x40)
@@ -53,16 +48,9 @@ static void processInputFromHost() {
   executeCommand(command);
 }
 
-static void processKeyboard() {
-  uint8_t scancode = get_scan_code();
-  if (scancode) {
-    Serial.println(scancode, HEX);
-  }
-}
-
 void loop() {
   processInputFromHost();
-  processKeyboard();
+  //processAuxInput();
 }
 
 
