@@ -10,7 +10,6 @@
  */
 
 #include <WProgram.h>
-// #include <avr/sleep.h>
 #include <Sprite.h>
 #include <Matrix.h>
 #include "LED.h"
