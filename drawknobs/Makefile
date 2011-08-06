@@ -10,6 +10,7 @@ CFLAGS=$(INCLUDES) -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections
 CXXFLAGS=$(CFLAGS)
 
 OBJS=drawknobs.o
+LIBS=../lib/2009/core.a
 
 DUDE=/usr/share/arduino/hardware/tools/avrdude
 DUDECONF=/usr/share/arduino/hardware/tools/avrdude.conf
@@ -19,8 +20,8 @@ DUDEFLAGS=-C$(DUDECONF) $(DUDEBUG) -patmega328p -carduino -P/dev/ttyUSB0 -b57600
 
 all: drawknobs.hex drawknobs.eep
 
-drawknobs.elf: $(OBJS) core.a
-	avr-gcc -Os -Wl,--gc-sections -mmcu=atmega328p -o drawknobs.elf $(OBJS) core.a -lm
+drawknobs.elf: $(OBJS) $(LIBS)
+	avr-gcc -Os -Wl,--gc-sections -mmcu=atmega328p -o drawknobs.elf $(OBJS) $(LIBS) -lm
 
 drawknobs.eep: drawknobs.elf
 	avr-objcopy -O ihex -j .eeprom --set-section-flags=.eeprom=alloc,load --no-change-warnings --change-section-lma .eeprom=0 drawknobs.elf drawknobs.eep
