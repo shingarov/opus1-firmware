@@ -15,10 +15,16 @@
 #include "LED.h"
 
 // SPI pins.
+// On the 328 chip, these are 10, 11, (12), 13.
+#define DATA_PIN   11
+#define CLOCK_PIN  13
+#define CS_PIN     10
+#if 0
 // On the Mega, these are 51, 52, 53.
 #define DATA_PIN   51
 #define CLOCK_PIN  52
 #define CS_PIN     53
+#endif
 static Matrix m = Matrix(DATA_PIN, CLOCK_PIN, CS_PIN);
 
 static void illuminate_all(void) {
