@@ -13,7 +13,7 @@ CFLAGS=$(INCLUDES) -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections
 CXXFLAGS=$(CFLAGS)
 
 OBJS=opus1.o LED.o OK.o
-LIBS=lib/uno/Matrix.o lib/uno/Sprite.o lib/uno/core.a
+LIBS=../lib/uno/Matrix.o ../lib/uno/Sprite.o ../lib/uno/core.a
 
 COMPORT=/dev/ttyACM0
 
