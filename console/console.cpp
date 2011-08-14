@@ -24,7 +24,7 @@
  *
  * Console->Host:
  * Each message is two bytes.
- * For Analog messages, the form is 1N00000X XXXXXXXX.
+ * For Analog messages, the form is 1N0000XX XXXXXXXX.
  * N=0 for Volume, N=1 for Tuning; X is the 10-bit value.
  * Do not transmit a change if it is smaller than MINDELTA.
  * 
@@ -40,17 +40,18 @@
 /*
  * Parameters
  */
-#define STEP_DELAY 1000
+#define STEP_DELAY 30
 
-#define MINDELTA 5
+#define MINDELTA 8
 
 #define VOLUME_PIN A2
-#define TUNING_ONOFF_PIN 55
+#define TUNING_ONOFF_PIN 55 // A1
 #define TUNING_PIN A0
 
-#define NUM_DIGITAL_PINS 1
+#define NUM_DIGITAL_PINS 7
 static unsigned char DigitalInPins[NUM_DIGITAL_PINS] = {
-  TUNING_ONOFF_PIN,
+  48, 49, 50, 51, 52, 53,
+  TUNING_ONOFF_PIN
 };
 static unsigned char DigitalStatus[NUM_DIGITAL_PINS];
 
@@ -60,7 +61,19 @@ static unsigned char DigitalStatus[NUM_DIGITAL_PINS];
 void setup();
 void loop();
 
+static int PistonRowPullPins[2] = { 33, 35 };
+static int PistonColumnPins[8] = { 23,25,26,27,28,29,30,32 };
+static int piston_status[2] = { 0x7F, 0x7F };
+static int row = 0;
 static void setup_pistons() {
+  for (int row=0; row<=1; row++) {
+    pinMode(PistonRowPullPins[row], OUTPUT);
+    digitalWrite(PistonRowPullPins[row], HIGH);
+  }
+  for (int column=0; column<8; column++) {
+    pinMode(PistonColumnPins[column], INPUT);
+    digitalWrite(PistonColumnPins[column], HIGH);
+  }
 }
 
 static int X1, X2;
@@ -80,7 +93,11 @@ static void setup_digital() {
   }
 }
 
-void setup_led() {
+static void setup_led() {
+  for (int i=3; i<=13; i++) {
+    pinMode(i, OUTPUT);
+    digitalWrite(i, LOW);
+  }
 }
 
 void setup() {
@@ -88,14 +105,38 @@ void setup() {
   setup_analog();
   setup_digital();
   setup_led();
-  Serial.begin(115200);
+  Serial.begin(9600);
 }
 
 void do_pistons() {
+  for (int column=0; column<8; column++) {
+    int x = digitalRead(PistonColumnPins[column]);
+    int saved = (piston_status[row]>>column) & 1;
+    if (x != saved) {
+      // Report to the host that piston column@row is now in state x
+      Serial.write(x << 6); // first byte
+      unsigned char NNNN = column | (row << 3);
+      Serial.write(NNNN | 0x80); // second byte
+
+      // Update saved status
+      piston_status[row] ^= (1 << column);
+    }
+  }
+
+  // release
+  digitalWrite(PistonRowPullPins[row], HIGH);
+
+  // flip row
+  row = row? 0 : 1;
+
+  digitalWrite(PistonRowPullPins[row], LOW);
 }
 
 static void report_analog_value(int which, int value) {
-//  Serial.println(which? "Tuning" : "Volume");
+  int higher = 0x03 & ((value & 0x0300) >> 8);
+  int lower = value & 0x00FF;
+  Serial.write(0x80 | (which? 0x40:0x00) | higher);
+  Serial.write(lower);
 }
 
 void do_analog() {
@@ -121,12 +162,21 @@ void do_digital() {
     unsigned x = digitalRead(pin);
     if (x != DigitalStatus[i]) {
       DigitalStatus[i] = x;
-      Serial.println(x);
+      // Report to host that digital pull-down line i is in state x
+      Serial.write(x<<6);
+      Serial.write(i);
     }
   }
 }
 
 void do_led() {
+  if (Serial.available()==0) return;
+  unsigned command = Serial.read();
+  if (command & 0xE0) return; // invalid command, ignore
+  unsigned status = (command & 0x10) ? HIGH : LOW;
+  unsigned LLLL = command & 0x0F;
+  if (LLLL > 10) return; // invalid command, ignore
+  digitalWrite(3+LLLL, status);
 }
 
 void loop() {
