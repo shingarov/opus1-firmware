@@ -1,5 +1,5 @@
 #
-# Makefile for Ladarevo Opus.1 AVR firmware.
+# Makefile for Ladarevo OPUS.1 AVR firmware.
 # Copyright (c) 2010-2011 Ladarevo Software Inc.
 #
 
