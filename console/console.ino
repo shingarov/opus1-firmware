@@ -2,7 +2,7 @@
  * Ladarevo OPUS.1R2
  * Console firmware
  *
- * Copyright (c) 2009-2014 Ladarevo Software Inc.
+ * Copyright (c) 2009-2022 Ladarevo Software Inc.
  *
  * OPUS.1 is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
  * =============
  *
  * Host->Console:
+ * --------------
  * Each message is a single byte of form 2rSDXXXYYY,
  * and is a command to switch a LED on or off.
  * S=0 is OFF, S=1 is ON.
@@ -33,7 +34,42 @@
  * The 8 digits of the 7segment display are ....
  *
  * Console->Host:
- * ........
+ * --------------
+ * Each message is a single byte reporting that a control has been pressed
+ * or released.  The Most-Significant Bit is either 1 (representing change
+ * from OFF to ON) or 0 (representing change from ON to OFF).  There is no
+ * attempt to interpret any controls as "modifiers" or anything at a level
+ * higher than purely physical scan-codes.  For example, reinterpreting M2
+ * as a second modifier is done at the host level, not in the firmware.
+ *
+ * The next most-significant bit divides the 128-point scancode space into
+ * the lower half, for the French drawknobs: S0XXXYYY, and the upper half,
+ * which is further subdivided into Pistons S100NNNN and Studs S110TTTT.
+ *
+ * As with the LED direction, the numeration of knob rows and columns is
+ * 0-based.  For example, "top leftmost knob pressed" will be 0x80, whereas
+ * "lowest rightmost knob released" will be 0x25.
+ *
+ * The nibble numbering the pistons is as follows:
+ *
+ *  *0  R
+ *  *1  1
+ *  *2  4
+ *  *3  2
+ *  *4  5
+ *  *5  3
+ *  *6  6
+ *  *7  7
+ *  *8  M2
+ *  *9  RG(0)
+ *  *A
+ *  *B  SET
+ *  *C  BASS
+ *  *D  CHIMES
+ *  *E  MEL
+ *  *F
+ *
+ * Here the "*" upper nibble is 2r1100 (piston ON) or 2r0100 (piston OFF).
  */
 
 
